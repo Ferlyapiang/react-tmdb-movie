@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 const MiddleView = ({ darkMode }) => {
@@ -10,30 +10,33 @@ const MiddleView = ({ darkMode }) => {
     { key: 'Watchlist Saya', icon: 'heart-outline', pressed: false },
   ]);
 
-  const renderItem = ({ item, index }) => (
-    <TouchableOpacity
-      style={[
-        styles.middleTextCircle,
-        { borderColor: item.pressed ? 'blue' : 'grey' },
-        { color: item.pressed ? 'blue' : (darkMode ? 'white' : 'black') }
-      ]}
-      onPress={() => {
-        const updatedStatus = [...itemStatus];
-        updatedStatus[index].pressed = !updatedStatus[index].pressed;
-        setItemStatus(updatedStatus);
-      }}
-    >
-      {item.icon && (
-        <Ionicons
-          name={item.icon}
-          style={{ marginRight: 5 }}
-          size={18}
-          color={darkMode ? 'white' : 'black'}
-        />
-      )}
-      <Text style={{ color: item.pressed ? 'blue' : (darkMode ? 'white' : 'black') }}>{item.key}</Text>
-    </TouchableOpacity>
-  );
+  const renderItems = () => {
+    return itemStatus.map((item, index) => (
+      <TouchableOpacity
+        key={index}
+        style={[
+          styles.middleTextCircle,
+          { borderColor: item.pressed ? 'blue' : 'grey' },
+          { color: item.pressed ? 'blue' : (darkMode ? 'white' : 'black') }
+        ]}
+        onPress={() => {
+          const updatedStatus = [...itemStatus];
+          updatedStatus[index].pressed = !updatedStatus[index].pressed;
+          setItemStatus(updatedStatus);
+        }}
+      >
+        {item.icon && (
+          <Ionicons
+            name={item.icon}
+            style={{ marginRight: 5 }}
+            size={18}
+            color={darkMode ? 'white' : 'black'}
+          />
+        )}
+        <Text style={{ color: item.pressed ? 'blue' : (darkMode ? 'white' : 'black') }}>{item.key}</Text>
+      </TouchableOpacity>
+    ));
+  };
 
   return (
     <View style={[styles.middleContainer, { backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0)' }]}>
@@ -44,13 +47,9 @@ const MiddleView = ({ darkMode }) => {
           <Ionicons name="chevron-forward-circle" size={24} color={darkMode ? 'white' : 'black'} />
         </View>
       </View>
-      <FlatList
-        data={itemStatus}
-        renderItem={({ item, index }) => renderItem({ item, index, darkMode })}
-        keyExtractor={(item) => item.key}
-        contentContainerStyle={styles.flatListContainer}
-      />
-
+      <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        {renderItems()}
+      </ScrollView>
     </View>
   );
 };
@@ -89,9 +88,9 @@ const styles = StyleSheet.create({
     padding: 5,
     marginBottom: 20,
   },
-  flatListContainer: {
+  scrollViewContainer: {
     flexDirection: 'row',
-    padding: 5
+    padding: 5,
   },
 });
 

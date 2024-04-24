@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Image, FlatList, Dimensions } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, View, Image, Dimensions, ScrollView } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const data = [
@@ -9,6 +9,7 @@ const data = [
 ];
 
 const BannerView = ({ darkMode }) => {
+  const scrollViewRef = useRef(null);
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
 
   const onViewableItemsChanged = ({ viewableItems }) => {
@@ -17,26 +18,30 @@ const BannerView = ({ darkMode }) => {
     }
   };
 
-  const renderItem = ({ item, _ }) => (
-    <View style={styles.item}>
-      <Image
-        source={{ uri: item.image }}
-        style={styles.bannerImage}
-      />
-    </View>
-  );
+  const onScroll = (event) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const newIndex = Math.round(offsetX / width);
+    setCurrentItemIndex(newIndex);
+  };
 
   return (
     <View style={[styles.bannerContainer, { backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }]}>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
+      <ScrollView
+        ref={scrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        onViewableItemsChanged={onViewableItemsChanged}
-        viewabilityConfig={{ viewAreaCoveragePercentThreshold: 50 }}
-      />
+        pagingEnabled
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+      >
+        {data.map((item, index) => (
+          <Image
+            key={item.id}
+            source={{ uri: item.image }}
+            style={styles.bannerImage}
+          />
+        ))}
+      </ScrollView>
       <View style={styles.indicatorContainer}>
         {data.map((item, index) => (
           <View key={index} style={[styles.indicator, { backgroundColor: index === currentItemIndex ? 'white' : 'gray' }]} />
@@ -55,9 +60,6 @@ const styles = StyleSheet.create({
     width: width,
     height: 200,
     resizeMode: 'cover',
-  },
-  item: {
-    width: width,
   },
   indicatorContainer: {
     flexDirection: 'row',
