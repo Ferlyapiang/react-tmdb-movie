@@ -28,7 +28,7 @@ const BannerView = ({ darkMode }) => {
         {data.map((item, index) => (
           <Image
             key={item.id}
-            source={{ uri: `https://image.tmdb.org/t/p/original${item.poster_path}` }}
+            source={{ uri: `https://image.tmdb.org/t/p/w500${item.poster_path}` }} // Menggunakan versi gambar dengan resolusi lebih rendah
             style={styles.bannerImage}
           />
         ))}

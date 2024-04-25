@@ -18,7 +18,7 @@ const BuyTiketView = ({ darkMode }) => {
           <TouchableOpacity key={movie.id} onPress={() => console.log('Movie pressed')}>
             <View style={styles.imageContainer}>
               <Image
-                source={{ uri: `https://image.tmdb.org/t/p/original${movie.poster_path}` }}
+                source={{ uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}` }}
                 style={styles.buyTiketImage}
               />
               <Text style={styles.buyTiketText}>BELI TIKET</Text>
