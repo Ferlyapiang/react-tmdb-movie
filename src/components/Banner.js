@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, View, Image, Dimensions, ScrollView } from 'react-native';
 import useMovieData from '../config/config';
 
@@ -8,6 +8,19 @@ const BannerView = ({ darkMode }) => {
   const scrollViewRef = useRef(null);
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const data = useMovieData();
+
+  useEffect(() => {
+    const scrollInterval = setInterval(() => {
+      if (currentItemIndex < data.length - 1) {
+        scrollViewRef.current.scrollTo({ x: (currentItemIndex + 1) * width, animated: true });
+        setCurrentItemIndex(currentItemIndex + 1);
+      } else {
+        scrollViewRef.current.scrollTo({ x: 0, animated: true });
+        setCurrentItemIndex(0);
+      }
+    }, 5000); 
+    return () => clearInterval(scrollInterval);
+  }, [currentItemIndex, data.length]);
 
   const onScroll = (event) => {
     const offsetX = event.nativeEvent.contentOffset.x;
@@ -28,7 +41,7 @@ const BannerView = ({ darkMode }) => {
         {data.map((item, index) => (
           <Image
             key={item.id}
-            source={{ uri: `https://image.tmdb.org/t/p/w500${item.backdrop_path}` }} // Menggunakan versi gambar dengan resolusi lebih rendah
+            source={{ uri: `https://image.tmdb.org/t/p/w500${item.backdrop_path}` }}
             style={styles.bannerImage}
           />
         ))}
@@ -50,7 +63,7 @@ const styles = StyleSheet.create({
   bannerImage: {
     width: width,
     resizeMode: 'stretch',
-    aspectRatio: '16/9'
+    aspectRatio: 16/9,
   },
   indicatorContainer: {
     flexDirection: 'row',
