@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { StyleSheet, View, Image, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, View, Image, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import useMovieData from '../config/config';
+import MovieModal from './MovieModal';
 
 const { width } = Dimensions.get('window');
 
 const BannerView = ({ darkMode }) => {
   const scrollViewRef = useRef(null);
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
   const data = useMovieData();
 
   useEffect(() => {
@@ -28,6 +31,11 @@ const BannerView = ({ darkMode }) => {
     setCurrentItemIndex(newIndex);
   };
 
+  const handleImagePress = (movie) => {
+    setSelectedMovie(movie);
+    setShowModal(true);
+  };
+
   return (
     <View style={[styles.bannerContainer, { backgroundColor: darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)' }]}>
       <ScrollView
@@ -39,11 +47,12 @@ const BannerView = ({ darkMode }) => {
         scrollEventThrottle={16}
       >
         {data.map((item, index) => (
-          <Image
-            key={item.id}
-            source={{ uri: `https://image.tmdb.org/t/p/w500${item.backdrop_path}` }}
-            style={styles.bannerImage}
-          />
+          <TouchableOpacity key={item.id} onPress={() => handleImagePress(item)}>
+            <Image
+              source={{ uri: `https://image.tmdb.org/t/p/w500${item.backdrop_path}` }}
+              style={styles.bannerImage}
+            />
+          </TouchableOpacity>
         ))}
       </ScrollView>
       <View style={styles.indicatorContainer}>
@@ -51,6 +60,9 @@ const BannerView = ({ darkMode }) => {
           <View key={index} style={[styles.indicator, { backgroundColor: index === currentItemIndex ? 'white' : 'gray' }]} />
         ))}
       </View>
+
+      {/* Gunakan komponen MovieModal */}
+      <MovieModal showModal={showModal} setShowModal={setShowModal} selectedMovie={selectedMovie} />
     </View>
   );
 };
