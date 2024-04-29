@@ -28,7 +28,7 @@ const BannerView = ({ darkMode }) => {
         {data.map((item, index) => (
           <Image
             key={item.id}
-            source={{ uri: `https://image.tmdb.org/t/p/w500${item.poster_path}` }} // Menggunakan versi gambar dengan resolusi lebih rendah
+            source={{ uri: `https://image.tmdb.org/t/p/w500${item.backdrop_path}` }} // Menggunakan versi gambar dengan resolusi lebih rendah
             style={styles.bannerImage}
           />
         ))}
@@ -49,8 +49,8 @@ const styles = StyleSheet.create({
   },
   bannerImage: {
     width: width,
-    height: 200,
-    resizeMode: 'cover',
+    resizeMode: 'stretch',
+    aspectRatio: '16/9'
   },
   indicatorContainer: {
     flexDirection: 'row',
